@@ -1,0 +1,5 @@
+export default function Home() {return <main className="game-home">
+<img className="cover" src="./gameplay.png" alt="Actual gameplay: Alex Reyes beside his blue car in Port Mercer"/><div className="shade"/>
+<header><span>LAST EXIT</span><span>CITY STORIES · ALPHA</span></header>
+<section className="start-panel" aria-label="Start playing"><p className="eyebrow">PORT MERCER / CASE 001</p><h1>Your brother is alive.<br/>The city wants him silent.</h1><p>Follow the evidence through 19 story quests, or take the blue car out in free roam.</p><a className="play" href="./play/index.html">Play in browser <span aria-hidden="true">↗</span></a><p className="small">Desktop or mobile landscape. Touch controls appear on phones. Progress saves on this device.</p><div className="other"><a href="./downloads/index.html">Download for Windows</a><a href="https://www.roblox.com/games/71445820523277/LAST-EXIT-City-Stories">Roblox edition ↗</a></div></section>
+<footer><span>WASD move · Mouse look · F drive · E interact · V change view</span><span>Actual gameplay shown · Alpha edition</span></footer></main>}
