@@ -19,6 +19,8 @@ var alex_model: Node3D
 var third_person := true
 var touch_mode := false
 var touch_controls: Control
+var performance_mode := false
+var sun_light: DirectionalLight3D
 var player: CharacterBody3D
 var ride: CharacterBody3D
 var camera: Camera3D
@@ -67,6 +69,7 @@ func _ready() -> void:
 	setup_environment()
 	city.build(self)
 	setup_player()
+	apply_render_quality(OS.has_feature("web") or touch_mode)
 	setup_ride()
 	setup_crashes()
 	setup_marker()
@@ -93,6 +96,28 @@ func _ready() -> void:
 	if "--crash-test" in OS.get_cmdline_user_args(): call_deferred("crash_test")
 	if "--touch-test" in OS.get_cmdline_user_args(): call_deferred("touch_test")
 	if "--showcase" in OS.get_cmdline_user_args(): call_deferred("capture_showcase")
+	if "--turn-benchmark" in OS.get_cmdline_user_args(): call_deferred("turn_benchmark")
+
+func apply_render_quality(fast: bool) -> void:
+	performance_mode = fast
+	get_viewport().msaa_3d = Viewport.MSAA_DISABLED if fast else Viewport.MSAA_2X
+	get_viewport().scaling_3d_scale = 0.75 if fast else 1.0
+	if sun_light: sun_light.shadow_enabled = not fast
+	if camera: camera.far = 260 if fast else 850
+
+func turn_benchmark() -> void:
+	start_game("free")
+	player.position = Vector3(0,0.3,24)
+	for fast in [false,true]:
+		apply_render_quality(fast)
+		for i in 30: await RenderingServer.frame_post_draw
+		var start := Time.get_ticks_msec()
+		for i in 120:
+			yaw = float(i)/120.0*TAU
+			await RenderingServer.frame_post_draw
+		var duration := Time.get_ticks_msec()-start
+		print("TURN BENCHMARK ","PERFORMANCE" if fast else "DETAIL",": ",duration," ms / 120 frames")
+	get_tree().quit()
 
 func capture_showcase() -> void:
 	start_game("story")
@@ -176,6 +201,7 @@ func setup_environment() -> void:
 	environment.environment = env
 	add_child(environment)
 	var sun := DirectionalLight3D.new()
+	sun_light = sun
 	sun.name = "LateAfternoon"
 	sun.rotation_degrees = Vector3(-27,-35,0)
 	sun.light_color = Color("ffd6a0")
@@ -305,6 +331,9 @@ func distance_to_objective() -> float:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if auto_test or screenshot_mode: return
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F2:
+		apply_render_quality(not performance_mode)
+		show_toast("Graphics: Performance" if performance_mode else "Graphics: Detail")
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED and not paused and not dialogue and not journal:
 		yaw -= event.relative.x*0.0022
 		pitch = clampf(pitch-event.relative.y*0.0022,-1.25,1.05)
@@ -840,3 +869,4 @@ func capture_preview() -> void:
 		get_viewport().get_texture().get_image().save_png("res://../Crash Preview.png")
 	print("CAPTURE COMPLETE; rendering FPS: ",Engine.get_frames_per_second())
 	get_tree().quit()
+

@@ -227,7 +227,7 @@ func draw_pause() -> void:
 		button(Rect2(457,271,366,52),"RESUME","resume",true)
 		button(Rect2(457,337,366,52),"SAVE & MAIN MENU","menu")
 		button(Rect2(457,403,366,52),"SOUND: "+("ON" if game.sound else "OFF"),"sound")
-		button(Rect2(457,469,366,52),"SAVE & QUIT","quit")
+		button(Rect2(457,469,366,52),"GRAPHICS: "+("FAST" if game.performance_mode else "DETAIL"),"quality")
 
 func _gui_input(event: InputEvent) -> void:
 	if (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT) or (event is InputEventScreenTouch and event.pressed):
@@ -240,6 +240,7 @@ func _gui_input(event: InputEvent) -> void:
 
 func activate(action: String) -> void:
 	match action:
+		"quality": game.apply_render_quality(not game.performance_mode)
 		"continue": game.start_game("story",game.saved)
 		"new": game.start_game("story")
 		"free": game.start_game("free")
@@ -259,3 +260,4 @@ func activate(action: String) -> void:
 		"quit":
 			game.save_game()
 			get_tree().quit()
+

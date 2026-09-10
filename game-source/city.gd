@@ -479,6 +479,7 @@ func landmarks() -> void:
 func update(delta: float, elapsed: float) -> void:
 	for entry in cars:
 		var c: Node3D = entry.node
+		c.visible = not root.performance_mode or c.position.distance_squared_to(root.camera.position) < 12100
 		var axis: int = entry.axis
 		var coord: float = c.position.z if axis == 0 else c.position.x
 		var cross := fposmod(coord+40,80)-40
@@ -490,8 +491,10 @@ func update(delta: float, elapsed: float) -> void:
 		if axis == 0: c.position.z = coord
 		else: c.position.x = coord
 	for entry in pedestrians:
+		entry.node.visible = not root.performance_mode or entry.node.position.distance_squared_to(root.camera.position) < 4900
 		entry.node.position.x += entry.direction*entry.speed*delta
 		if abs(entry.node.position.x) > 199: entry.direction *= -1
+		if not entry.node.visible: continue
 		entry.node.rotation.y = -PI/2 if entry.direction > 0 else PI/2
 		entry.node.position.y = 0.2+sin(elapsed*7+entry.node.position.x)*0.025
 		var swing: float = sin(elapsed*6+entry.node.position.x)*0.32
@@ -499,4 +502,7 @@ func update(delta: float, elapsed: float) -> void:
 		entry.node.get_node("RightLeg").rotation.x = -swing
 		entry.node.get_node("LeftArm").rotation.x = -swing*0.7
 		entry.node.get_node("RightArm").rotation.x = swing*0.7
-	for npc in talking_npcs.values(): animate_person(npc,elapsed)
+	for npc in talking_npcs.values():
+		npc.visible = not root.performance_mode or npc.position.distance_squared_to(root.camera.position) < 6400
+		if npc.visible: animate_person(npc,elapsed)
+

@@ -9,7 +9,7 @@ window.fetch = async function(input, options) {
   if (!compressed.ok) throw new Error('Game download failed. Please reload.');
   return new Response(compressed.body.pipeThrough(new DecompressionStream('gzip')), {headers:{'Content-Type':'application/wasm'}});
  }
- return originalFetch(input, options);
+ if(url.pathname.endsWith('/play/index.pck')) return originalFetch(url.href+'?v=fast2', options); return originalFetch(input, options);
 };
 </script>
 		<meta charset="utf-8">
@@ -124,7 +124,7 @@ body{touch-action:none;overscroll-behavior:none}#mobile-fullscreen{position:fixe
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":2671780,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":2673364,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
@@ -230,4 +230,5 @@ const engine = new Engine(GODOT_CONFIG);
 		</script>
 	<script>document.querySelector('#mobile-fullscreen').onclick=async()=>{try{await document.documentElement.requestFullscreen();document.querySelector('#mobile-fullscreen').style.display='none';}catch{document.querySelector('#mobile-fullscreen').textContent='Use landscape mode';}};</script></body>
 </html>
+
 
