@@ -8,6 +8,13 @@
       "when": 1790938920919,
       "tag": "0000_mean_puppet_master",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1791022917044,
+      "tag": "0001_wooden_prodigy",
+      "breakpoints": true
     }
   ]
 }
